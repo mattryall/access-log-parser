@@ -1,3 +1,5 @@
+### Access log parser
+
 Takes an [Apache log format pattern](http://httpd.apache.org/docs/2.0/mod/mod_log_config.html) on the command line and the log files in Apache common log format on stdin:
 
     $ cat logs/* | access-log-parser.pl "%t %h %m %s %T %U" | head
