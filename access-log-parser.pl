@@ -7,6 +7,7 @@ my ($pattern) = @ARGV;
 die "Usage: $0 PATTERN\n(where PATTERN includes Apache log formatting elements, e.g. \"%b %h [%t] %s %r\")"
     unless defined $pattern;
  
+my $sql = 1;        # set to '1' for SQL-escaped output
 my %conversion = (
     '%h' => '$host',
     '%l' => '$logname',
@@ -43,15 +44,21 @@ while (<STDIN>) {
             \s+          # - some whitespace, or
             | $          # - the end of a line.
         )/xg);
-    my ($host, $logname, $remoteuser, $date, $req, $status, $bytes, $ref, $ua, $time)  = @tokens;
-#     for ($date) {
-#         s/^\[//; # strip leading bracket
-#         s/\]$//; # strip trailing bracket
-#     }
-    for ($req, $ua) {
+    my ($host, $logname, $remoteuser, $date, $req, $status, $bytes, $time, $ref, $ua)  = @tokens;
+    for ($date) {
+        s/^\[//; # strip leading bracket
+        s/\]$//; # strip trailing bracket
+    }
+    for ($req, $ref, $ua) {
         s/^"//; # strip leading quote
         s/"$//; # strip trailing quote
         s/\\"/"/g; # fix escaped quotes
+        s/'/''/g if $sql; # escape single quotes for SQL
+    }
+    if ($sql) {
+        for ($status, $bytes, $time) {
+            s/^-$/null/; # replace '-' with null
+        }
     }
     my ($method, $url) = ("-", "-");
     if ($req =~ m!^(GET|POST|HEAD|OPTIONS|PROPFIND) (.*) HTTP/1.[01]$!) {
