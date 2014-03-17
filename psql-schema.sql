@@ -3,7 +3,7 @@ CREATE TABLE access (
 	date TIMESTAMP,
 	method VARCHAR(10),
 	url VARCHAR(1024),
-	url_prefix VARCHAR(255),
+	url_path VARCHAR(255),
 	status INTEGER,
 	size INTEGER,
 	time_ms INTEGER,

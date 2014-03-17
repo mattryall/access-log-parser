@@ -21,6 +21,7 @@ my %conversion = (
     '%b' => '$bytes',
     '%i{Referer}' => '$ref',
     '%i{User-Agent}' => '$ua',
+    '%i{URL-Path}' => '$url_path',
     '%T' => '$time',
 );
 while (my ($format, $var) = each %conversion) {
@@ -60,10 +61,13 @@ while (<STDIN>) {
             s/^-$/null/; # replace '-' with null
         }
     }
-    my ($method, $url) = ("-", "-");
+    my ($method, $url, $url_path) = ("-", "-", "-");
     if ($req =~ m!^(GET|POST|HEAD|OPTIONS|PROPFIND) (.*) HTTP/1.[01]$!) {
         $method = $1;
         $url = $2;
+        $url_path = $2;
+        $url_path =~ s{\?.*$}{}g;
+        $url_path =~ s{^/s/.*?/_}{}g;
     }
  
     print eval($pattern);
