@@ -1,6 +1,6 @@
 CREATE TABLE access (
 	id SERIAL,
-	date TIMESTAMP,
+	date TIMESTAMP WITH TIME ZONE,
 	method VARCHAR(10),
 	url VARCHAR(1024),
 	url_path VARCHAR(255),
@@ -12,5 +12,6 @@ CREATE TABLE access (
 );
 
 CREATE INDEX ON access (status);
-CREATE INDEX ON access (url_prefix);
+CREATE INDEX ON access (url_path);
+CREATE INDEX ON access (time_ms);
 
